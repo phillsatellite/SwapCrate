@@ -1,0 +1,64 @@
+/* Phone-column layout: centered, capped width, full height. */
+.app-shell {
+  position: relative;
+  width: 100%;
+  max-width: var(--app-max);
+  margin: 0 auto;
+  height: 100dvh; /* fixed to the viewport so the frame never grows/scrolls */
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Content area. Pages that are taller than the frame (My Trades, Account)
+   scroll internally; Home is sized to fit exactly and does not scroll. */
+.app-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 8px);
+}
+
+/* Home fills the frame exactly — no scrolling on the swipe screen. */
+.app-content:has(.home) {
+  overflow-y: hidden;
+}
+
+/* Splash shown while the session cookie is being checked. */
+.app-splash {
+  align-items: center;
+  justify-content: center;
+}
+.app-splash > svg {
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(10, 108, 255, 0.35);
+  animation: splash-pulse 1.1s ease-in-out infinite;
+}
+@keyframes splash-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Large iOS-style navigation title used across pages. */
+.page-header {
+  padding: 12px 20px 4px;
+}
+.page-header h1 {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin-top: 2px;
+}

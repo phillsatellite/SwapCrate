@@ -9,6 +9,19 @@ from models import Item, Swipe, Match
 swipes_bp = Blueprint("swipes", __name__)
 
 
+@swipes_bp.route("/passes", methods=["DELETE"])
+@jwt_required()
+def clear_passes():
+    """Forget the current user's passes (liked=False) so those items show up
+    in the feed again. Likes/matches are untouched."""
+    user_id = int(get_jwt_identity())
+    cleared = Swipe.query.filter_by(swiper_id=user_id, liked=False).delete(
+        synchronize_session=False
+    )
+    db.session.commit()
+    return jsonify({"cleared": cleared}), 200
+
+
 def _find_or_create_match(user_id_1, user_id_2):
     """Return an existing Match for the pair, or create one. Idempotent."""
     a_id, b_id = Match.ordered_pair(user_id_1, user_id_2)

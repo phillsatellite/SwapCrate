@@ -1,0 +1,190 @@
+/* Shared iOS grouped-list styling for My Trades and Account. */
+
+.list {
+  list-style: none;
+  margin: 12px 16px 0;
+  padding: 0;
+  background: var(--card);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: 56px;
+  border-bottom: 0.5px solid var(--separator);
+}
+.list-row:last-child {
+  border-bottom: none;
+}
+.list-row:active {
+  background: var(--fill);
+}
+
+.list-thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background: var(--fill);
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+.list-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Section header above a grouped list (e.g. "Likes you"). */
+.list-section {
+  margin: 22px 20px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-secondary);
+}
+
+/* Heart button to match back with an incoming like. */
+.matchback-btn {
+  margin-left: auto;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.matchback-btn:active:not(:disabled) {
+  transform: scale(0.9);
+}
+.matchback-btn:disabled {
+  opacity: 0.5;
+}
+
+/* Circular initial avatar (used on match rows). */
+.list-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--tint);
+  color: #fff;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.list-row__text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.list-row__title {
+  font-size: 17px;
+  font-weight: 500;
+}
+.list-row__sub {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.list-row__chevron {
+  margin-left: auto;
+  color: var(--text-tertiary);
+  font-size: 22px;
+  font-weight: 400;
+}
+
+/* Profile header block */
+.profile {
+  text-align: center;
+  padding: 20px 16px 8px;
+}
+.profile__avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--tint);
+  color: #fff;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  font-weight: 700;
+}
+.profile__name {
+  margin-top: 12px;
+  font-size: 22px;
+  font-weight: 700;
+}
+.profile__email {
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin-top: 2px;
+}
+
+.list-cta {
+  padding: 24px 16px;
+  text-align: center;
+}
+.btn-primary--danger {
+  background: var(--red);
+}
+
+/* Back link for sub-pages (e.g. My Matches). */
+.back-link {
+  display: inline-block;
+  color: var(--tint);
+  font-size: 17px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.back-link:active {
+  opacity: 0.6;
+}
+
+/* Rows that navigate on tap. */
+.list-row--tappable {
+  cursor: pointer;
+}
+
+/* Right-aligned timestamp on a match row. */
+.list-row__meta {
+  margin-left: auto;
+  color: var(--text-tertiary);
+  font-size: 13px;
+  white-space: nowrap;
+  align-self: center;
+}
+
+/* Empty state for lists (no matches yet). */
+.list-empty {
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--text-secondary);
+}
+.list-empty__emoji {
+  font-size: 52px;
+  margin-bottom: 10px;
+}

@@ -7,7 +7,7 @@ over PubNub.
 
 ## Stack
 
-- Flask (app-factory + blueprints)
+- Flask (app-factory + route modules)
 - PostgreSQL via SQLAlchemy + Alembic (Flask-Migrate)
 - JWT auth (Flask-JWT-Extended) with a DB token blocklist for real logout
 - Bcrypt password hashing

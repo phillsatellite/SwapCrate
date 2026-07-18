@@ -1,0 +1,84 @@
+.auth {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 24px calc(32px + env(safe-area-inset-bottom));
+  gap: 8px;
+}
+
+.auth__brand {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.auth__brand > svg {
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(10, 108, 255, 0.35);
+}
+.auth__title {
+  margin-top: 14px;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+.auth__title span {
+  color: var(--tint);
+}
+.auth__tagline {
+  margin-top: 4px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.auth__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Inputs (shared look with the "List an item" form). */
+.field-input {
+  width: 100%;
+  background: var(--card);
+  color: var(--text);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 15px 16px;
+  font-size: 17px;
+  font-family: inherit;
+  box-shadow: var(--shadow-sm);
+  outline: none;
+}
+.field-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 1;
+}
+.field-input:focus {
+  box-shadow: 0 0 0 2px var(--tint);
+}
+
+.auth__error {
+  color: var(--red);
+  font-size: 14px;
+  text-align: center;
+  margin: 2px 0;
+}
+
+.auth__submit {
+  width: 100%;
+  margin-top: 6px;
+}
+.auth__submit:disabled {
+  opacity: 0.5;
+}
+
+.auth__switch {
+  text-align: center;
+  margin-top: 18px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+.auth__switch a {
+  color: var(--tint);
+  font-weight: 600;
+}
