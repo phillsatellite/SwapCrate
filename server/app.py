@@ -1,5 +1,7 @@
 """Application factory and entry point."""
-from flask import Flask, jsonify
+import os
+
+from flask import Flask, jsonify, send_from_directory
 
 from config import Config
 from extensions import db, migrate, bcrypt, jwt, cors, limiter
@@ -77,6 +79,26 @@ def create_app(config_class=Config):
     @app.route("/api/health")
     def health():
         return {"status": "ok"}
+
+    # In production the built React app is copied to ./static_frontend during
+    # the Docker build, and Flask serves it (same-origin -> cookie auth just
+    # works). Locally the folder is absent (Vite serves the frontend), so these
+    # routes aren't registered and the app stays API-only.
+    frontend_dir = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "static_frontend"
+    )
+    if os.path.isdir(frontend_dir):
+
+        @app.route("/", defaults={"path": ""})
+        @app.route("/<path:path>")
+        def serve_spa(path):
+            if path.startswith("api/"):
+                return jsonify({"error": "not found"}), 404
+            file_path = os.path.join(frontend_dir, path)
+            if path and os.path.isfile(file_path):
+                return send_from_directory(frontend_dir, path)
+            # Everything else -> index.html (client-side routing)
+            return send_from_directory(frontend_dir, "index.html")
 
     return app
 

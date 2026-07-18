@@ -296,9 +296,32 @@ curl -s -o /dev/null -w "%{http_code}\n" -b $JAR -X POST $BASE/swipes \
 
 ---
 
-## Production notes
+## Deploying (Railway — one always-on service)
 
-- Set `COOKIE_SECURE=true` (requires HTTPS).
-- Use a persistent rate-limiter store (e.g. Redis) and add `ProxyFix` so per-IP
-  limiting works behind a reverse proxy.
-- Set `FRONTEND_ORIGIN` to the deployed frontend URL and use production PubNub keys.
+The repo includes a **`Dockerfile`** that builds the React app and runs Flask
+(serving **both** the API and the built frontend) with gunicorn — so the entire
+site deploys as a **single service**. Because Flask serves the frontend,
+everything is same-origin and the cookie auth just works (no cross-site cookie
+issues).
+
+1. Go to **https://railway.com** and **sign in with GitHub**.
+2. **New Project → Deploy from GitHub repo →** pick `SwapCrate`. Railway detects
+   the `Dockerfile` and builds it automatically.
+3. **New → Database → PostgreSQL** in the same project.
+4. On the web service, set **Variables** (Settings → Variables):
+   | Variable | Value |
+   |----------|-------|
+   | `DATABASE_URL` | reference the Postgres service: `${{Postgres.DATABASE_URL}}` |
+   | `JWT_SECRET_KEY` | a long random string |
+   | `COOKIE_SECURE` | `true` (Railway serves HTTPS) |
+   | `PUBNUB_PUBLISH_KEY` / `PUBNUB_SUBSCRIBE_KEY` / `PUBNUB_SECRET_KEY` | your PubNub keys |
+5. Deploy. On boot the container runs `flask db upgrade` (creates the tables),
+   then starts gunicorn. Railway hands you a **public URL** — that's the whole app.
+6. *(Optional, first deploy only)* load sample data with
+   `railway run python seed.py` — **this wipes and reseeds the DB**, so never run
+   it once real users exist.
+
+### Further production hardening (optional)
+- Use a persistent rate-limiter store (e.g. Redis) instead of in-memory, and add
+  `ProxyFix` so per-IP limiting works correctly behind Railway's proxy.
+- Rotate the PubNub keys and `JWT_SECRET_KEY` used in development.
