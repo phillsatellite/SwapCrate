@@ -83,6 +83,7 @@ class Item(db.Model):
     title = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text, default="")
     image_url = db.Column(db.String(500))
+    location = db.Column(db.String(120))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -99,6 +100,7 @@ class Item(db.Model):
             "title": self.title,
             "description": self.description,
             "image_url": self.image_url,
+            "location": self.location,
             "user_id": self.user_id,
             "categories": [t.name for t in self.categories],
             "wanted": [t.name for t in self.wanted],

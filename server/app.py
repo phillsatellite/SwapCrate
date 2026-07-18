@@ -2,7 +2,7 @@
 from flask import Flask, jsonify
 
 from config import Config
-from extensions import db, migrate, bcrypt, jwt, cors
+from extensions import db, migrate, bcrypt, jwt, cors, limiter
 from models import TokenBlocklist
 
 
@@ -15,7 +15,14 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     jwt.init_app(app)
-    cors.init_app(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+    limiter.init_app(app)
+    # CORS locked to the known frontend origin, with credentials so the
+    # httpOnly auth cookie is allowed on cross-origin requests.
+    cors.init_app(
+        app,
+        resources={r"/api/*": {"origins": [app.config["FRONTEND_ORIGIN"]]}},
+        supports_credentials=True,
+    )
 
     # A token is revoked (logged out) if its jti is in the blocklist table.
     @jwt.token_in_blocklist_loader
@@ -40,13 +47,25 @@ def create_app(config_class=Config):
     def revoked_token(jwt_header, jwt_payload):
         return jsonify({"error": "Token has been revoked"}), 401
 
-    # Register blueprints
-    from blueprints.auth import auth_bp
-    from blueprints.items import items_bp
-    from blueprints.tags import tags_bp
-    from blueprints.swipes import swipes_bp
-    from blueprints.matches import matches_bp
-    from blueprints.messaging import messaging_bp
+    # Reject requests that are missing/failing the CSRF double-submit check.
+    from flask_jwt_extended.exceptions import CSRFError
+
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(err):
+        return jsonify({"error": "CSRF token missing or invalid"}), 401
+
+    # Friendly JSON when a client trips a rate limit.
+    @app.errorhandler(429)
+    def ratelimit_handler(err):
+        return jsonify({"error": "Too many requests, please slow down"}), 429
+
+    # Register route modules
+    from routes.auth import auth_bp
+    from routes.items import items_bp
+    from routes.tags import tags_bp
+    from routes.swipes import swipes_bp
+    from routes.matches import matches_bp
+    from routes.messaging import messaging_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(items_bp, url_prefix="/api/items")

@@ -4,6 +4,7 @@ Flask-Migrate==4.0.7
 Flask-Cors==4.0.1
 Flask-Bcrypt==1.0.1
 Flask-JWT-Extended==4.6.0
+Flask-Limiter==3.8.0
 psycopg2-binary==2.9.9
 python-dotenv==1.0.1
 pubnub==7.4.0

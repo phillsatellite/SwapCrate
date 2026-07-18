@@ -1,0 +1,43 @@
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid var(--fill);
+  border-top-color: var(--tint);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.status__emoji {
+  font-size: 44px;
+}
+.status__text {
+  font-size: 15px;
+}
+.status__btn {
+  margin-top: 4px;
+  background: var(--tint);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 11px 20px;
+  border-radius: 12px;
+}
+.status__btn:active {
+  opacity: 0.8;
+}

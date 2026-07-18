@@ -1,4 +1,6 @@
 """Items (listings / swipe cards): CRUD + the swipe feed."""
+import random
+
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -51,6 +53,7 @@ def create_item():
         title=title,
         description=(data.get("description") or "").strip(),
         image_url=(data.get("image_url") or "").strip() or None,
+        location=(data.get("location") or "").strip() or None,
         user_id=user_id,
     )
     item.categories = _tags_from_names(data.get("categories"))
@@ -81,6 +84,8 @@ def update_item(item_id):
         item.description = (data.get("description") or "").strip()
     if "image_url" in data:
         item.image_url = (data.get("image_url") or "").strip() or None
+    if "location" in data:
+        item.location = (data.get("location") or "").strip() or None
     if "categories" in data:
         item.categories = _tags_from_names(data.get("categories"))
     if "wanted" in data:
@@ -105,39 +110,59 @@ def delete_item(item_id):
     return jsonify({"message": "deleted"}), 200
 
 
+def _norm(name):
+    """Normalize a tag for lenient matching: lowercase, collapse whitespace,
+    and drop a trailing 's' so singular/plural align (bike ↔ bikes,
+    mountain bike ↔ mountain bikes)."""
+    n = " ".join(name.strip().lower().split())
+    if len(n) > 3 and n.endswith("s"):
+        n = n[:-1]
+    return n
+
+
 @items_bp.route("/feed", methods=["GET"])
 @jwt_required()
 def feed():
     """The swipe stack for the current user.
 
-    Shows other people's items that:
-      - the user hasn't already swiped on, and
-      - match the user's trade filters.
-
-    Filters default to the union of `wanted` tags across the user's own items,
-    and can be overridden with one or more ?tag= query params.
+    Shows ALL other people's items the user hasn't swiped on yet. The user's
+    trade filters don't hide anything — they set *priority*: items whose
+    category matches the user's `wanted` tags come first, then the rest appear
+    in random order. Filters default to the union of `wanted` tags across the
+    user's own items, and can be overridden with one or more ?tag= params.
+    Matching is lenient (case- and plural-insensitive) so "bike" and "bikes"
+    line up.
     """
     user_id = int(get_jwt_identity())
 
-    # Items the user has already swiped on — exclude them.
-    swiped_ids = [s.item_id for s in Swipe.query.filter_by(swiper_id=user_id).all()]
+    swiped_ids = {s.item_id for s in Swipe.query.filter_by(swiper_id=user_id).all()}
 
-    query = Item.query.filter(Item.user_id != user_id)
-    if swiped_ids:
-        query = query.filter(~Item.id.in_(swiped_ids))
-
-    # Determine which category tags to match against.
-    requested = [t.strip().lower() for t in request.args.getlist("tag") if t.strip()]
+    # Which tags to prioritize by.
+    requested = [t for t in request.args.getlist("tag") if t.strip()]
     if requested:
-        wanted_names = requested
+        wanted = {_norm(t) for t in requested}
     else:
         my_items = Item.query.filter_by(user_id=user_id).all()
-        wanted_names = {t.name for item in my_items for t in item.wanted}
+        wanted = {_norm(t.name) for item in my_items for t in item.wanted}
 
-    if wanted_names:
-        query = query.join(item_categories).join(Tag).filter(
-            db.func.lower(Tag.name).in_(list(wanted_names))
-        ).distinct()
+    candidates = [
+        item
+        for item in Item.query.filter(Item.user_id != user_id).all()
+        if item.id not in swiped_ids
+    ]
 
-    items = query.order_by(Item.created_at.desc()).all()
-    return jsonify([i.to_dict() for i in items]), 200
+    if wanted:
+        # Prioritized (matches a filter) first, then everything else — each
+        # group shuffled so the feed feels fresh each time.
+        priority, rest = [], []
+        for item in candidates:
+            item_cats = {_norm(t.name) for t in item.categories}
+            (priority if item_cats & wanted else rest).append(item)
+        random.shuffle(priority)
+        random.shuffle(rest)
+        ordered = priority + rest
+    else:
+        random.shuffle(candidates)
+        ordered = candidates
+
+    return jsonify([i.to_dict() for i in ordered]), 200

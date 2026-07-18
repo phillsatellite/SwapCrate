@@ -1,0 +1,128 @@
+.new-item {
+  min-height: 100%;
+}
+
+/* Top bar: Cancel · title · Post (iOS modal form pattern). */
+.new-item__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 0.5px solid var(--separator);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 2;
+}
+.new-item__cancel {
+  color: var(--tint);
+  font-size: 17px;
+}
+.new-item__heading {
+  font-size: 17px;
+  font-weight: 600;
+}
+.new-item__post {
+  color: var(--tint);
+  font-size: 17px;
+  font-weight: 700;
+}
+.new-item__post:disabled {
+  color: var(--text-tertiary);
+  font-weight: 600;
+}
+
+.new-item__form {
+  padding: 16px 20px 32px;
+}
+
+/* Field labels & inputs */
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-secondary);
+  margin: 18px 2px 8px;
+}
+.field-label:first-child {
+  margin-top: 0;
+}
+.field-input {
+  width: 100%;
+  background: var(--card);
+  color: var(--text);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 14px 14px;
+  font-size: 17px;
+  font-family: inherit;
+  box-shadow: var(--shadow-sm);
+  outline: none;
+}
+.field-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 1; /* Firefox lowers placeholder opacity by default */
+}
+.field-input:focus {
+  box-shadow: 0 0 0 2px var(--tint);
+}
+.field-textarea {
+  resize: vertical;
+  line-height: 1.4;
+}
+
+/* Photo preview (image loaded from the pasted URL) */
+.photo-preview {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--fill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-preview__hint {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.new-item__error {
+  color: var(--red);
+  font-size: 14px;
+  text-align: center;
+  margin-top: 14px;
+}
+
+.new-item__submit {
+  margin-top: 28px;
+  width: 100%;
+}
+.new-item__submit:disabled {
+  opacity: 0.5;
+}
+
+.new-item__delete {
+  margin-top: 12px;
+  width: 100%;
+  padding: 13px;
+  border-radius: 14px;
+  background: var(--fill);
+  color: var(--red);
+  font-size: 17px;
+  font-weight: 600;
+}
+.new-item__delete:active:not(:disabled) {
+  opacity: 0.7;
+}
+.new-item__delete:disabled {
+  opacity: 0.5;
+}

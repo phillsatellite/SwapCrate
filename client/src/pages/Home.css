@@ -1,0 +1,269 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Branded header: logo badge + two-tone wordmark. */
+.home-header {
+  padding: 16px 20px 8px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand :first-child {
+  /* the logo badge — soft shadow to lift it off the background */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(10, 108, 255, 0.35);
+  flex-shrink: 0;
+}
+.brand__name {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+.brand__name span {
+  color: var(--tint);
+}
+.brand__tagline {
+  margin-top: 8px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.home-header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.home__add {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--fill);
+  color: var(--tint);
+  font-size: 22px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.home__add:active {
+  opacity: 0.6;
+}
+
+/* Gate shown when the user has no listing yet. */
+.home__gate {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 32px;
+  gap: 6px;
+}
+.home__gate-emoji {
+  font-size: 60px;
+}
+.home__gate h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+.home__gate p {
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.4;
+  max-width: 280px;
+}
+.home__gate .btn-primary {
+  margin-top: 16px;
+}
+
+.home__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  padding: 12px 18px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Swipe animation ---------------------------------------------------- */
+.swipe-card {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  cursor: pointer;
+  will-change: transform, opacity;
+}
+
+/* card fills the stage all the way down to the tab bar */
+.swipe-card .card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.swipe-card .card__photo {
+  flex: 1;
+  min-height: 0;
+  aspect-ratio: auto; /* override the fixed 4:3 so the photo can grow */
+}
+.swipe-card .card__body {
+  padding-bottom: 96px; /* clear band the floating buttons sit over */
+}
+
+/* incoming card gently pops in */
+.swipe-card--enter {
+  animation: card-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes card-in {
+  from {
+    transform: translateY(10px) scale(0.97);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* outgoing card slides off + tilts in the swipe direction */
+.swipe-card--exit-left,
+.swipe-card--exit-right {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+}
+.swipe-card--exit-left {
+  transform: translateX(-130%) rotate(-18deg);
+  opacity: 0;
+}
+.swipe-card--exit-right {
+  transform: translateX(130%) rotate(18deg);
+  opacity: 0;
+}
+
+/* LIKE / NOPE emoji stamps, revealed as the card flies away */
+.stamp {
+  position: absolute;
+  top: 22px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 6px 14px;
+  border-radius: 12px;
+  border: 3px solid currentColor;
+  background: rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  pointer-events: none;
+}
+.stamp--pass {
+  left: 18px;
+  color: var(--red);
+  transform: rotate(-14deg);
+}
+.stamp--like {
+  right: 18px;
+  color: var(--green);
+  transform: rotate(14deg);
+}
+.swipe-card--exit-left .stamp--pass {
+  opacity: 1;
+}
+.swipe-card--exit-right .stamp--like {
+  opacity: 1;
+}
+
+/* respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  .swipe-card--enter,
+  .swipe-card--exit-left,
+  .swipe-card--exit-right {
+    animation: none;
+    transition: opacity 0.2s ease;
+    transform: none;
+  }
+}
+
+/* Circular Tinder-style action buttons, floating over the bottom of the card. */
+.swipe-actions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 24px;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  pointer-events: none; /* let taps fall through the gaps to the card */
+}
+.swipe-btn {
+  pointer-events: auto;
+}
+.swipe-btn {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+  font-size: 28px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.swipe-btn:active {
+  transform: scale(0.9);
+}
+.swipe-btn--pass {
+  color: var(--red);
+}
+.swipe-btn--like {
+  color: var(--green);
+}
+
+.home__hint {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-top: 16px;
+}
+
+/* Empty state */
+.home__empty {
+  text-align: center;
+  padding: 48px 24px;
+}
+.home__empty-emoji {
+  font-size: 56px;
+}
+.home__empty h2 {
+  margin-top: 12px;
+  font-size: 22px;
+  font-weight: 700;
+}
+.home__empty p {
+  margin-top: 6px;
+  color: var(--text-secondary);
+}
+
+.btn-primary {
+  margin-top: 20px;
+  background: var(--tint);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  padding: 13px 22px;
+  border-radius: 14px;
+  min-width: 160px;
+  transition: opacity 0.12s ease;
+}
+.btn-primary:active {
+  opacity: 0.8;
+}

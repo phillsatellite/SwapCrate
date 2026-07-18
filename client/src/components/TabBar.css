@@ -1,0 +1,43 @@
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--app-max);
+  z-index: 50;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  /* Solid surface — deliberately NOT a translucent/blurred glass bar. */
+  background: var(--card);
+  border-top: 0.5px solid var(--separator);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab {
+  height: var(--tabbar-h);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--text-secondary);
+  transition: color 0.15s ease;
+}
+
+.tab--active {
+  color: var(--tint);
+}
+
+.tab:active {
+  opacity: 0.6;
+}
+
+.tab__label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
