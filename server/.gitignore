@@ -15,3 +15,6 @@ env/
 
 # OS
 .DS_Store
+
+# Built frontend copied in during Docker build
+static_frontend/

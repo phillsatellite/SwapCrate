@@ -9,9 +9,11 @@ load_dotenv()
 
 class Config:
     # --- Database ---
+    # Some hosts (Railway/Heroku) hand out a "postgres://" URL, but SQLAlchemy
+    # requires the "postgresql://" scheme — normalize it.
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL", "postgresql://localhost:5432/swapcrate"
-    )
+    ).replace("postgres://", "postgresql://", 1)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # --- Auth / JWT ---
